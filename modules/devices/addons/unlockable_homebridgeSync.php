@@ -2,15 +2,16 @@
 
 //Замок
 $payload['service'] = 'LockMechanism';
+addToOperationsQueue("homekit_queue", "add", json_encode($payload, JSON_UNESCAPED_UNICODE));
 $payload['characteristic'] = 'LockCurrentState';
-sg('HomeBridge.to_add', json_encode($payload));
 $payload['value'] = (int)gg($devices[$i]['LINKED_OBJECT'] . '.lockstatus');
-sg('HomeBridge.to_set', json_encode($payload));
+addToOperationsQueue("homekit_queue", "set", json_encode($payload, JSON_UNESCAPED_UNICODE));
+$payload['characteristic'] = 'LockTargetState';
+addToOperationsQueue("homekit_queue", "set", json_encode($payload, JSON_UNESCAPED_UNICODE));
 //Датчик закрытия
-$payload['name'] .= "_sensor";
 $payload['service_name'] .= "_sensor";
 $payload['service'] = 'ContactSensor';
-sg('HomeBridge.to_add', json_encode($payload));
+addToOperationsQueue("homekit_queue", "add/service", json_encode($payload, JSON_UNESCAPED_UNICODE));
 $payload['characteristic'] = 'ContactSensorState';
 $payload['value'] = (int)gg($devices[$i]['LINKED_OBJECT'] . '.ncno') == 'nc' ? 1 - gg($devices[$i]['LINKED_OBJECT'] . '.status') : gg($devices[$i]['LINKED_OBJECT'] . '.status');
-sg('HomeBridge.to_set', json_encode($payload));
+addToOperationsQueue("homekit_queue", "set", json_encode($payload, JSON_UNESCAPED_UNICODE));
